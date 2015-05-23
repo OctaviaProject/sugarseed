@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<!--[if lte IE 8]><html class="lt-ie9"><![endif]-->
+<!--[if gt IE 8]><!--><html><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Sugarseed</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--
+    "VERSION"
+    "TIME"
+    
+    Sugarcane is based on:
+    
+    TiddlyWiki 1.2.39 by Jeremy Ruston, (jeremy [at] osmosoft [dot] com)
+    
+    Published under a BSD open source license
+    
+    Copyright (c) Osmosoft Limited 2005
+    
+    Redistribution and use in source and binary forms, with or without modification,
+    are permitted provided that the following conditions are met:
+    
+    Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+    
+    Redistributions in binary form must reproduce the above copyright notice, this
+    list of conditions and the following disclaimer in the documentation and/or other
+    materials provided with the distribution.
+    
+    Neither the name of the Osmosoft Limited nor the names of its contributors may be
+    used to endorse or promote products derived from this software without specific
+    prior written permission.
+    
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+    OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+    SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+    TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+    BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+    CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+    DAMAGE.
+    -->
+  <script title="engine">
+    (function(){
+    
+      "ENGINE"
+      
+      "SUGARCANE"
+
+      testplay = "START_AT";
+    
+    }());
+  </script>
+  <script title="modules">
+    "JQUERY"
+    "MODERNIZR"
+  </script>
+  <link href='http://fonts.googleapis.com/css?family=Alegreya:400italic,400' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Chivo:400,900' rel='stylesheet' type='text/css'>
+  <style id="baseCSS">
+    /* menubar */
+    #menubar #title, #menubar #credits  {
+    	cursor: auto;
+    }
+    .menu {
+    	position: fixed;
+    	display: none;
+    	z-index: 999;
+    }
+    /* Passages container */
+    #passages {
+      width 50%;
+    	margin: 10px auto;
+    	position: relative;
+    }
+    /* Links */
+    .passage a {
+    	color: #4d6ad8;
+    }
+    a.brokenLink {
+    	background-color: red;
+    	color: #000;
+    }
+    .marked {
+    	background-color: #f66;
+    	color: #000;
+    }
+    .marked[title] {
+    	cursor: help;
+    }
+    .passage li[data-bullet] {
+    	list-style-type: none;
+    }
+    .passage li[data-bullet]:before {
+    	content: attr(data-bullet);
+    	position: relative;
+    	left: -1em;
+    }
+    #storeArea {
+    	display: none;
+    }
+    #noscript {
+    	font-size: 1.2em;
+    	font-weight: bold;
+    }
+    /* HTML4 compatibility */
+    img {
+    	vertical-align:bottom;
+    }
+    @media screen and (max-width: 640px) {
+    	#menubar {
+    		position: fixed;
+    		margin: 0 auto;
+    		padding: 0;
+        }
+    	body #menubar li {
+    		text-align: center;
+    	}
+    	#passages {
+    		min-height: 100px;
+    		margin: 10px;
+    	}
+    }
+    #loadingbar {
+    	position:fixed;
+    	top:0;
+    	left:0;
+    	border-top: solid #4d6ad8 6px;
+    	transition: width 0.5s;
+    }
+  </style>
+  <style id="defaultCSS">
+    body {
+    	background-color: #000;
+    	color: #fff;
+    	font-family: 'Alegreya', serif;
+    	font-size: 100%;
+        margin: 0px;
+    }
+    #background {
+        min-width: 100%; 
+        min-height: 100%; 
+        background-repeat: repeat; 
+        position: fixed; 
+        left: 0px; 
+        top: 0px; 
+        z-index: -1; 
+    }
+    #menubar {
+    	position: static;
+    	top:0;
+    	left:0;
+    	width: 100%;
+    	display: inline-block;
+    	font: 1.1em Chivo, sans-serif;
+    	background: white;
+    	border-bottom: 1px solid #ddd;
+    	text-align: center;
+    	z-index: 999;
+    }
+    #menubar ul {
+    	padding: 0;
+    }
+    #menubar ul li {
+    	margin: 0 1em 1em 1em;
+    	list-style: none;
+    	display: inline;
+    }
+    #menubar li a {
+    	color: #333;
+    	text-decoration: none;
+    }
+    #menubar li a:hover {
+        cursor: pointer;
+        color: blue;
+    }
+    #menubar li a:hover, #menubar #title a:hover, #snapback:hover, #restart:hover {
+        cursor: pointer;
+    	text-decoration: none;
+    }
+    #title {
+      color: black;
+      font-size: 1.3em;
+    }
+    #title #storyAuthor {
+      color: #666;
+      font-size: 0.7em;
+      margin-left: 5px;
+    }
+    .menu div {
+    	padding: 0 .4em;
+    }
+    .menu div:hover {
+    	cursor: pointer;
+    	background-color: #fff;
+    	color: #343434;
+    }
+    .passage {
+    	font-size: 1.2em;
+    	line-height: 175%;
+    	text-align: left;
+    	margin: 2em auto 2em auto;
+    	max-width: 50%;
+    }
+    .passage:after {
+      clear:both;
+    }
+    .passage a {
+    	font-weight: bold;
+    	text-decoration: none;
+    }
+    .passage a:hover {
+        cursor: pointer;
+    	color: #8ea6ff;
+    	text-decoration: none;
+    }
+    .content > ul {
+    	padding-top: 1.3em;
+    }
+    .passage ul, .passage ol {
+    	margin-left: .5em;
+    	padding-left: 1.5em;
+    }
+    .passage li {
+    	margin-right: 6em;
+    }
+    .passage table {
+    	border-collapse: collapse;
+    	font-size: 100%;
+    	margin: .8em 1.0em;
+    }
+    .passage th,.passage td,.passage tr,.passage caption {
+    	padding: 3px;
+    }
+    .passage hr {
+    	height: 1px;
+    }
+    .passage center {
+    	max-width: 50%;
+    	margin: auto;
+    }
+    .marked {
+    	margin-right: 12px;
+    	padding: 3px;
+    }
+    .disabled {
+    	font-weight: bold;
+    	color: #333;
+    }
+    @media screen and (max-width: 800px) {
+    	#menubar {
+    		width:100%;
+    		margin: 0;
+    	}
+        #menubar ul li { 
+            display: block;
+        }
+        .passage {
+            max-width: 80%;
+            margin: 0 auto;
+        }
+    }
+    @media screen and (max-width: 640px) {
+    	#menubar {
+    		width:100%;
+    		margin: 0;
+    	}
+        #menubar ul li { 
+            display: block;
+        }
+        .passage {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+    }
+  </style>
+  <style id="transitionCSS">
+    .transition-in {
+    	opacity: 0;
+    	position: absolute;
+    }
+    .passage:not(.transition-out) {
+    	transition: 1s;
+    	-webkit-transition: 1s;
+    }
+    .transition-out {
+    	opacity:0 !important;
+    	position: absolute;
+    }
+  </style>
+  <style id="storyCSS"></style>
+  <style id="tagCSS"></style>
+</head>
+
+<body>
+  <div id="loadingbar"></div>
+  <div id="menubar">
+    <ul>
+      <li id="title" class="storyElement">
+        <span id="storyTitle" class="storyElement"></span>
+        <span id="storySubtitle" class="storyElement"></span>
+        <span id="storyAuthor" class="storyElement"></span>
+      </li>
+      <li id="storyMenu" class="storyElement" style="display:none"></li>
+      <li><a href="javascript:;" id="restart">Restart</a></li>
+      <li><a id="bookmark" title="Permanent link to this passage">Bookmark</a></li>
+    </ul>
+  </div>
+  <div id="snapbackMenu" class="menu"></div>
+  <br style="clear: both;" />
+  <div id="passages">
+    <noscript><div id="noscript">Please enable Javascript to play this story!</div></noscript>
+    <style>
+      #menubar{display:none;}
+    </style>
+  </div>
+  
+  <div id="background"></div>
+  <div id="storeArea" data-size="STORY_SIZE" hidden>"STORY"</div>
+
+</body></html>
